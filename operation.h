@@ -1,0 +1,20 @@
+/*
+ * Filename: operation.h
+ * Description: Operation enum definition
+ * Author: Drew Malone <malonea@msoe.edu>
+ * Created: 9/30/25
+ * Compile with: make
+ */
+
+typedef enum {
+    ADDVEC,
+    SUBVEC,
+    DOTVEC,
+    CROSSVEC,
+    SCALAR_MULT,
+    NEW_VEC,
+    LIST,
+    CLEAR,
+    HELP,
+    QUIT
+} Operation;

@@ -1,0 +1,9 @@
+# Dependency files
+*.d
+
+# Object files
+*.o
+
+# Built executables
+veclab
+testSuite
