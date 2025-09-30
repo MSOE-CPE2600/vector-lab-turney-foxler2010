@@ -6,6 +6,13 @@
  * Compile with: make
  */
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include "vecmath.h"
+#include "command_struct.h"
+
 int execute(Command *command, bool *quitting);
 
 int quit(bool *quitting);

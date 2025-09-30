@@ -6,7 +6,7 @@
  * Compile with: make
  */
 
-#include "vector_struct.h"
+#include "vecmath.h"
 
 int addvec(Vector *a, Vector *b)
 {

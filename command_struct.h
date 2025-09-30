@@ -9,7 +9,7 @@
 #include "vector_struct.h"
 #include "operation.h"
 
-typedef struct {
+typedef struct Command {
     Operation operation;
     Vector a;
     Vector b;

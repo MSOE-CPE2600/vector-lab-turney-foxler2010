@@ -6,6 +6,10 @@
  * Compile with: make
  */
 
+// TODO remove this once vecmath functions are implemented
+#include <stdio.h>
+#include "vector_struct.h"
+
 int addvec(Vector *a, Vector *b);
 
 int subvec(Vector *a, Vector *b);

@@ -6,9 +6,14 @@
  * Compile with: make
  */
 
-typedef struct {
+#ifndef VECTOR_H
+#define VECTOR_H
+
+typedef struct Vector {
     char name[30];
     double x;
     double y;
     double z;
 } Vector;
+
+#endif // VECTOR_H

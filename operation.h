@@ -6,7 +6,7 @@
  * Compile with: make
  */
 
-typedef enum {
+typedef enum Operation {
     ADDVEC,
     SUBVEC,
     DOTVEC,

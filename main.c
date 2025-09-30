@@ -7,13 +7,7 @@
  * Compile with: make
  */
 
-#include <stdlib.h>
-#include <stdbool.h>
 #include "main.h"
-#include "vecmath.h"
-#include "vector_struct.h"
-#include "command_struct.h"
-#include "operation.h"
 
 int main(int argc, char *argv[])
 {
@@ -26,8 +20,20 @@ int main(int argc, char *argv[])
         /*
          * Read & Parse command
          */
+        char input[100];
+        printf("veclab> ");
+        fgets(input, sizeof(input), stdin);
+        char *token[10];
+        int i = 0;
+        token[i] = strtok(input, " ");
+        while (token[i] != NULL) {
+            printf("%s", token[i]);
+            i++;
+            strtok(NULL, " ");
+        }
 
-        // TODO
+        command.operation = LIST;
+
 
         /*
          * Execute command
@@ -42,22 +48,22 @@ int execute(Command *command, bool *quitting)
 {
     switch(command->operation) {
         case ADDVEC:
-            addvec(command->a, command->b);
+            addvec(&command->a, &command->b);
             break;
         case SUBVEC:
-            subvec(command->a, command->b);
+            subvec(&command->a, &command->b);
             break;
         case DOTVEC:
-            dotvec(command->a, command->b);
+            dotvec(&command->a, &command->b);
             break;
         case CROSSVEC:
-            crossvec(command->a, command->b);
+            crossvec(&command->a, &command->b);
             break;
         case SCALAR_MULT:
-            scalar_mult(command->a, command->b);
+            scalar_mult(&command->a, &command->b);
             break;
         case NEW_VEC:
-            new_vec(command->a, command->x, command->y, command->z);
+            new_vec(&command->a, command->x, command->y, command->z);
             break;
         case LIST:
             list();
