@@ -13,12 +13,14 @@
 #include "vecmath.h"
 #include "command_struct.h"
 
-int execute(Command *command, bool *quitting);
+int execute(bool *quitting, Command command, Vector *vector_list);
 
 int quit(bool *quitting);
 
-int list();
+int display(Vector *vec);
 
-int clear();
+int list(Vector *vector_list);
+
+int clear(Vector *vector_list);
 
 int help();

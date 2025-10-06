@@ -13,6 +13,7 @@ typedef enum Operation {
     CROSSVEC,
     SCALAR_MULT,
     NEW_VEC,
+    DISPLAY,
     LIST,
     CLEAR,
     HELP,

@@ -11,8 +11,10 @@
 
 typedef struct Command {
     Operation operation;
-    Vector a;
-    Vector b;
+    // these are pointers so that any writes go straight to vector_list and not some intermediary
+    Vector *a;
+    Vector *b;
+    Vector *c;
     double x;
     double y;
     double z;

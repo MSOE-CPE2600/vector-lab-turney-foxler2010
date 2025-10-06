@@ -8,46 +8,50 @@
 
 #include "vecmath.h"
 
-int addvec(Vector *a, Vector *b)
+int addvec(Vector *c, Vector *a, Vector *b)
 {
-    // TODO
-    printf("addvec: a: %f %f %f, b: %f %f %f\n", a->x, a->y, a->z, b->x, b->y, b->z);
+    c->x = a->x + b->x;
+    c->y = a->y + b->y;
+    c->z = a->z + b->z;
     return 0;
 }
 
-int subvec(Vector *a, Vector *b)
+int subvec(Vector *c, Vector *a, Vector *b)
 {
-    // TODO
-    printf("subvec: a: %f %f %f, b: %f %f %f\n", a->x, a->y, a->z, b->x, b->y, b->z);
+    c->x = a->x - b->x;
+    c->y = a->y - b->y;
+    c->z = a->z - b->z;
     return 0;
 }
 
-int dotvec(Vector *a, Vector *b)
+int dotvec(Vector *c, Vector *a, Vector *b)
 {
-    // TODO
-    printf("dotvec: a: %f %f %f, b: %f %f %f\n", a->x, a->y, a->z, b->x, b->y, b->z);
+    c->x = a->x * b->x;
+    c->y = a->y * b->y;
+    c->z = a->z * b->z;
     return 0;
 }
 
-int crossvec(Vector *a, Vector *b)
+int crossvec(Vector *c, Vector *a, Vector *b)
 {
-    // TODO
-    printf("crossvec: a: %f %f %f, b: %f %f %f\n", a->x, a->y, a->z, b->x, b->y, b->z);
+    c->x = (a->y * b->z) - (a->z * b->y);
+    c->y = (a->z * b->x) - (a->x * b->z);
+    c->z = (a->x * b->y) - (a->y * b->x);
     return 0;
 }
 
-int scalar_mult(Vector *a, Vector *b)
+int scalar_mult(Vector *c, Vector *a, double scalar)
 {
-    // TODO
-    printf("scalar_mult: a: %f %f %f, b: %f %f %f\n", a->x, a->y, a->z, b->x, b->y, b->z);
+    c->x = a->x * scalar;
+    c->y = a->y * scalar;
+    c->z = a->z * scalar;
     return 0;
 }
 
-int new_vec(Vector *a, double x, double y, double z)
+int new_vec(Vector *new_vec, double x, double y, double z)
 {
-    printf("newvec: %f %f %f", x, y, z);
-    a->x = x;
-    a->y = y;
-    a->z = z;
+    new_vec->x = x;
+    new_vec->y = y;
+    new_vec->z = z;
     return 0;
 }
