@@ -81,29 +81,27 @@ int main(int argc, char *argv[])
         /*
          * Parse command
          */
-        if (tokenc == 1) {
-            if (!strcmp(token[0], "clear")) {
-                command.operation = CLEAR;
-            } else if (!strcmp(token[0], "list")) {
-                command.operation = LIST;
-            } else if (!strcmp(token[0], "quit")) {
-                command.operation = QUIT;
-            } else {
-                bool var_found = false;
-                int i = 0;
-                while(!var_found && i < 10) {
-                    if (!strcmp(token[0], vector_list[i].name)) {
-                        command.operation = DISPLAY;
-                        command.a = &(vector_list[i]);
-                        var_found = true;
-                    }
-                    i++;
+        if (!strcmp(token[0], "clear") && tokenc == 1) {
+            command.operation = CLEAR;
+        } else if (!strcmp(token[0], "list") && tokenc == 1) {
+            command.operation = LIST;
+        } else if (!strcmp(token[0], "quit") && tokenc == 1) {
+            command.operation = QUIT;
+        } else {
+            bool var_found = false;
+            int i = 0;
+            while(!var_found && i < 10) {
+                if (!strcmp(token[0], vector_list[i].name)) {
+                    command.operation = DISPLAY;
+                    command.a = &(vector_list[i]);
+                    var_found = true;
                 }
-                if (!var_found) {
-                    printf("no var named \"%s\" found.\n", token[0]);
-                    // skip execution this time around, and just prompt the user again immediately
-                    command.operation = NO_OP;
-                }
+                i++;
+            }
+            if (!var_found) {
+                printf("no var named \"%s\" found.\n", token[0]);
+                // skip execution this time around, and just prompt the user again immediately
+                command.operation = NO_OP;
             }
         }
 
