@@ -11,8 +11,8 @@
 
 int main(int argc, char *argv[])
 {
-    // declare token array and copy program arguments to it
-    char *token[10];
+    // declare token array/count and copy program arguments to it
+    char token[10][10];
     int tokenc = 0;
     if (argc > 1) {
         for (int i = 1; i < argc; i++) {
@@ -44,40 +44,95 @@ int main(int argc, char *argv[])
     Command command;
     bool quitting = false;
     while(!quitting) {
-    
         /*
          * Read command
          */
-
         // if the program doesn't have any input tokens yet, prompt the user
         if (tokenc == 0) {
             char input[100];
             printf("veclab> ");
             fgets(input, sizeof(input), stdin);
+
+            // tokenize
             int i = 0;
-            token[i] = strtok(input, " ");
-            while (token[i] != NULL) {
+            bool eof = false;
+            while (!eof) {
+                // store token to buffer so we can check for NULL
+                char *buf;
+                if (i == 0) {
+                    buf = strtok(input, " ");
+                } else {
+                    buf = strtok(NULL, " ");
+                }
+                if (buf == NULL) {
+                    // no more tokens in input string; break the loop.
+                    eof = true;
+                    // remove newline from the last token
+                    token[i-1][strlen(token[i-1])-1] = '\0';
+                } else {
+                    // latest token is a string; store it to the tokens array
+                    strcpy(token[i], buf);
+                    tokenc++;
+                }
                 i++;
-                token[i] = strtok(NULL, " ");
             }
         }
-        
 
         /*
          * Parse command
          */
-        
+        if (tokenc == 1) {
+            if (!strcmp(token[0], "clear")) {
+                command.operation = CLEAR;
+            } else if (!strcmp(token[0], "list")) {
+                command.operation = LIST;
+            } else if (!strcmp(token[0], "quit")) {
+                command.operation = QUIT;
+            } else {
+                bool var_found = false;
+                int i = 0;
+                while(!var_found && i < 10) {
+                    if (!strcmp(token[0], vector_list[i].name)) {
+                        command.operation = DISPLAY;
+                        command.a = &(vector_list[i]);
+                        var_found = true;
+                    }
+                    i++;
+                }
+                if (!var_found) {
+                    printf("no var named \"%s\" found.\n", token[0]);
+                    // skip execution this time around, and just prompt the user again immediately
+                    command.operation = NO_OP;
+                }
+            }
+        }
 
         // ensures old input tokens are discarded upon next iteration
-        tokenc = 0;
+        tokenc = 0;        
 
         /*
          * Execute command
          */
         execute(&quitting, command, vector_list);
 
+        // set command.operation to NO_OP to prevent anything from being repeated,
+        // if operation does not get set during the next parsing stage.
+        command.operation = NO_OP;
     }
+
     return EXIT_SUCCESS;
+}
+
+int read(int tokenc, char token[10][10])
+{
+    // TODO
+    return 0;
+}
+
+int parse(int *tokenc, char token[10][10], Command *command, Vector vector_list[])
+{
+    // TODO
+    return 0;
 }
 
 int execute(bool *quitting, Command command, Vector *vector_list)
@@ -86,21 +141,27 @@ int execute(bool *quitting, Command command, Vector *vector_list)
     switch(command.operation) {
         case ADDVEC:
             addvec(command.c, command.a, command.b);
+            display(command.c);
             break;
         case SUBVEC:
             subvec(command.c, command.a, command.b);
+            display(command.c);
             break;
         case DOTVEC:
             dotvec(command.c, command.a, command.b);
+            display(command.c);
             break;
         case CROSSVEC:
             crossvec(command.c, command.a, command.b);
+            display(command.c);
             break;
         case SCALAR_MULT:
             scalar_mult(command.c, command.a, command.x);
+            display(command.c);
             break;
         case NEW_VEC:
             new_vec(command.c, command.x, command.y, command.z);
+            display(command.c);
             break;
         case DISPLAY:
             display(command.a);
@@ -117,52 +178,11 @@ int execute(bool *quitting, Command command, Vector *vector_list)
         case QUIT:
             quit(quitting);
             break;
+        case NO_OP:
+            // do nothing
+            break;
         default:
-            help();
+            // do nothing
     }
-
-    // after executing, display the output
-    // could be either "varname = 1 2 3", or "ans = 1 2 3" depending on if the user specified an output varname.
-    display(command.c);
-    return 0;
-}
-
-int quit(bool *quitting)
-{
-    printf("quitting...\n");
-    *quitting = true;
-    return 0;
-}
-
-int display(Vector *vec)
-{
-    printf("%-5s %-7.2f %-7.2f %-7.2f\n", vec->name, vec->x, vec->y, vec->z);
-    return 0;
-}
-
-int list(Vector *vector_list)
-{
-    for (int i = 0; i < 10; i++) {
-        // strcmp returns 0 if the strings match; since we want the opposite, no "!" operator is required
-        if (strcmp((vector_list+i)->name, "")) {
-            display(vector_list+i);
-        }
-    }
-    return 0;
-}
-
-int clear(Vector *vector_list)
-{
-    // fill names with empty strings to denote unused slots
-    for (int i = 0; i < 10; i++) {
-        strcpy((vector_list+i)->name, "");
-    }
-    return 0;
-}
-
-int help()
-{
-    // TODO
-    printf("TODO help message\n");
     return 0;
 }

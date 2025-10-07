@@ -1,7 +1,7 @@
 CC := gcc
 CFLAGS := -c -Wall
 LDFLAGS := -lm
-SOURCES := main.c vecmath.c
+SOURCES := main.c commands.c vecmath.c
 OBJECTS := $(SOURCES:.c=.o)
 EXECUTABLE := veclab
 TEST_SOURCES := testSuite.c

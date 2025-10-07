@@ -6,21 +6,17 @@
  * Compile with: make
  */
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-#include "vecmath.h"
 #include "command_struct.h"
+#include "operation.h"
+#include "vecmath.h"
+#include "commands.h"
+
+int read(int tokenc, char token[10][10]);
+
+int parse(int *tokenc, char token[10][10], Command *command, Vector vector_list[]);
 
 int execute(bool *quitting, Command command, Vector *vector_list);
-
-int quit(bool *quitting);
-
-int display(Vector *vec);
-
-int list(Vector *vector_list);
-
-int clear(Vector *vector_list);
-
-int help();

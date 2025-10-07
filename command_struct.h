@@ -9,6 +9,9 @@
 #include "vector_struct.h"
 #include "operation.h"
 
+#ifndef COMMAND_H
+#define COMMAND_H
+
 typedef struct Command {
     Operation operation;
     // these are pointers so that any writes go straight to vector_list and not some intermediary
@@ -19,3 +22,5 @@ typedef struct Command {
     double y;
     double z;
 } Command;
+
+#endif // COMMAND_H

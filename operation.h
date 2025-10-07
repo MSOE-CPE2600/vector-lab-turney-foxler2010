@@ -6,6 +6,9 @@
  * Compile with: make
  */
 
+#ifndef OPERATION_H
+#define OPERATION_H
+
 typedef enum Operation {
     ADDVEC,
     SUBVEC,
@@ -17,5 +20,8 @@ typedef enum Operation {
     LIST,
     CLEAR,
     HELP,
-    QUIT
+    QUIT,
+    NO_OP
 } Operation;
+
+#endif // OPERATION_H
