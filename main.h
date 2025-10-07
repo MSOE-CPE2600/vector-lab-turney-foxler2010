@@ -17,6 +17,6 @@
 
 int read(int tokenc, char token[10][10]);
 
-int parse(int *tokenc, char token[10][10], Command *command, Vector vector_list[]);
+int parse_var(Vector **arg, Operation *operation, char *token, Vector *vector_list);
 
 int execute(bool *quitting, Command command, Vector *vector_list);
