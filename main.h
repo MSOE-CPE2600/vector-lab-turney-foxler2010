@@ -17,6 +17,8 @@
 
 int read(int tokenc, char token[10][10]);
 
-int parse_var(Vector **arg, Operation *operation, char *token, Vector *vector_list);
+int parse_var(Vector **arg, Operation *operation, char *token, Vector *vector_list, bool skip_error_message);
+
+int parse_new_vec(Vector **arg, Operation *operation, char *token, Vector *vector_list);
 
 int execute(bool *quitting, Command command, Vector *vector_list);
