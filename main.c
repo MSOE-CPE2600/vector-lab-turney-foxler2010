@@ -115,7 +115,11 @@ int main(int argc, char *argv[])
                         // and leave operation as NO_OP
                     }
                 }
-                parse_var(&(command.b), &(command.operation), token[4], vector_list, true);
+                if (first_token_scalar) {
+                    parse_var(&(command.a), &(command.operation), token[4], vector_list, true);
+                } else {
+                    parse_var(&(command.b), &(command.operation), token[4], vector_list, true);
+                }
                 if (command.operation == NO_OP) { // last token is not a var, could be a scalar
                     int return_value = sscanf(token[4], "%lf", &(command.x));
                     if (return_value > 0 && !first_token_scalar) {
@@ -180,7 +184,11 @@ int main(int argc, char *argv[])
                         // and leave operation as NO_OP
                     }
                 }
-                parse_var(&(command.b), &(command.operation), token[2], vector_list, true);
+                if (first_token_scalar) {
+                    parse_var(&(command.a), &(command.operation), token[2], vector_list, true);
+                } else {
+                    parse_var(&(command.b), &(command.operation), token[2], vector_list, true);
+                }
                 if (command.operation == NO_OP) { // last token is not a var, could be a scalar
                     int return_value = sscanf(token[2], "%lf", &(command.x));
                     if (return_value > 0 && !first_token_scalar) {
