@@ -43,7 +43,28 @@ int clear(Vector *vector_list)
 
 int help()
 {
-    // TODO
-    printf("TODO help message\n");
+    printf("Usage: veclab [-h|--help] [command]\n");
+    printf("    where \"command\" is a valid veclab command.\n");
+    printf("\n");
+    printf("Veclab will run the command given in the program arguments, if there is one,\n");
+    printf("and then open a prompt where more commands can be entered interactively.\n");
+    printf("\n");
+    printf("Commands:\n");
+    printf("  Informational:\n");
+    printf("    list  : lists variables in memory (max 10)\n");
+    printf("    clear : clears memory\n");
+    printf("    quit  : exits the program\n");
+    printf("    help  : displays this message\n");
+    printf("  Assigning Variables:\n");
+    printf("    varname = x y z\n");
+    printf("    varname = expression\n");
+    printf("  Expressions:\n");
+    printf("   all expressions print the result to the console,\n");
+    printf("   unless prefixed with an assignment.\n");
+    printf("    a + b : add two vectors\n");
+    printf("    a - b : subtract two vectors\n");
+    printf("    a * b : dot product of two vectors\n");
+    printf("    a x b : cross product of two vectors\n");
+    printf("    a * scalar : product of a vector and a scalar quantity\n");
     return 0;
 }
