@@ -11,57 +11,38 @@
 
 int main(int argc, char *argv[])
 {
-    // declare token array/count and copy program arguments to it
-    char token[10][10];
-    int tokenc = 0;
-    bool tokens_from_args = true;
+    /*
+     * Parse program arguments
+     */
+    bool help_flag = false;
     if (argc > 1) {
         for (int i = 1; i < argc; i++) {
-            strcpy(token[i-1], argv[i]);
-            tokenc++;
+            if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help")) {
+                help_flag = true;
+            }
         }
     }
 
-    // declare vector list and call clear() to make sure that empty slots are marked correctly
-    Vector vector_list[10];
-    clear(vector_list);
-
+    /*
+     * Vars that are reused every iteration
+     */
+    int tokenc;
+    char *token[6];
     Command command;
     bool quitting = false;
+    // TODO malloc-ify
+    Vector vector_list[10];
+    // call clear() to make sure that empty slots are marked correctly
+    clear(vector_list);
+
+    /*
+     * Main loop
+     */
     while (!quitting) {
         /*
          * Read command
          */
-        if (tokenc == 0) { // if the program doesn't have any input tokens yet, prompt the user
-            tokens_from_args = false;
-            char input[100];
-            printf("veclab> ");
-            fgets(input, sizeof(input), stdin);
-
-            // tokenize
-            int i = 0;
-            bool eof = false;
-            while (!eof) {
-                // store token to buffer so we can check for NULL
-                char *buf;
-                if (i == 0) {
-                    buf = strtok(input, " ");
-                } else {
-                    buf = strtok(NULL, " ");
-                }
-                if (buf == NULL) {
-                    // no more tokens in input string; break the loop.
-                    eof = true;
-                    // remove newline from the last token
-                    token[i-1][strlen(token[i-1])-1] = '\0';
-                } else {
-                    // latest token is a string; store it to the tokens array
-                    strcpy(token[i], buf);
-                    tokenc++;
-                }
-                i++;
-            }
-        }
+        read(&tokenc, &token, &help_flag);
 
         /*
          * Parse command
@@ -76,10 +57,9 @@ int main(int argc, char *argv[])
                 command.operation = LIST;
             } else if (!strcmp(token[0], "quit")) {
                 command.operation = QUIT;
-            } else if (!strcmp(token[0], "help")
-                || (!strcmp(token[0], "-h") && tokens_from_args)
-                || (!strcmp(token[0], "--help") && tokens_from_args)) {
+            } else if (!strcmp(token[0], "help") || help_flag) {
                 command.operation = HELP;
+                help_flag = false;
             } else {
                 command.operation = DISPLAY;
                 parse_var(&(command.a), &(command.operation), token[0], vector_list, false);
@@ -213,25 +193,52 @@ int main(int argc, char *argv[])
             command.operation = NO_OP;
         }
 
-        // ensures old input tokens are discarded upon next iteration
-        tokenc = 0;
-
         /*
          * Execute command
          */
         execute(&quitting, command, vector_list);
-
-        // set command.operation to NO_OP to prevent anything from being repeated,
-        // if operation does not get set during the next parsing stage.
-        command.operation = NO_OP;
     }
 
     return EXIT_SUCCESS;
 }
 
-int read(int tokenc, char token[10][10])
+int read(int *tokenc, char *token[], bool help_flag)
 {
-    // TODO
+    *tokenc = 0;
+    if (!help_flag) {
+        char input[100];
+        printf("veclab> ");
+        fgets(input, sizeof(input), stdin);
+
+        // tokenize
+        int i = 0;
+        bool eof = false;
+        while (!eof) {
+            // store token to buffer so we can check for NULL
+            char *buf;
+            if (i == 0) {
+                buf = strtok(input, " ");
+            } else {
+                buf = strtok(NULL, " ");
+            }
+            
+            if (buf == NULL) {
+                // no more tokens in input string; break the loop.
+                eof = true;
+                // remove newline from the last token
+                *(token+i-1)[strlen(*(token+i-1))-1] = '\0';
+            } else {
+                // latest token is a string; store it to the tokens array
+                strcpy(token[i], buf);
+                (*tokenc)++;
+            }
+            i++;
+        }
+    } else { // help flag set
+        // set tokenc to 1 to make sure that the parser gets to the help flag condition check
+        // this is a quick fix to prevent me having to mess with the parser
+        tokenc = 1;
+    }
     return 0;
 }
 

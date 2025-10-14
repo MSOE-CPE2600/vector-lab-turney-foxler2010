@@ -15,7 +15,7 @@
 #include "vecmath.h"
 #include "commands.h"
 
-int read(int tokenc, char token[10][10]);
+int read(int *tokenc, char *token[], bool help_flag);
 
 int parse_var(Vector **arg, Operation *operation, char *token, Vector *vector_list, bool skip_error_message);
 
