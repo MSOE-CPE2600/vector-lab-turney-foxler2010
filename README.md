@@ -1,4 +1,9 @@
-# Why there are commits from before today
+# Drew Malone's VecLab
+
+TODO write description
+
+# Old message from Lab 6:
+## Why there are commits from before today
 
 I have already been personally using Git to backup my code for all the previous labs.
 
@@ -11,4 +16,4 @@ but now that I've started doing it here I've enjoyed having all my code stored s
 In any case, for future assignments the GitHub Classroom repo will always be the "origin" remote,
 and I will not hesitate to remove my backup remote if any strange VCS problems crop up.
 
--Drew
+-Drew Malone
