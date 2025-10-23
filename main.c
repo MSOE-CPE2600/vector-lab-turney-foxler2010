@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
      * Vars that are reused every iteration
      */
     int tokenc;
-    char *token[6];
+    char token[MAX_TOKENS][TOKEN_LENGTH];
     Command command;
     bool quitting = false;
     // TODO malloc-ify
@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
         /*
          * Read command
          */
-        read(&tokenc, &token, &help_flag);
+        read(&tokenc, &token, help_flag);
 
         /*
          * Parse command
@@ -202,7 +202,7 @@ int main(int argc, char *argv[])
     return EXIT_SUCCESS;
 }
 
-int read(int *tokenc, char *token[], bool help_flag)
+int read(int *tokenc, char (*token)[MAX_TOKENS][TOKEN_LENGTH], bool help_flag)
 {
     *tokenc = 0;
     if (!help_flag) {
@@ -226,10 +226,10 @@ int read(int *tokenc, char *token[], bool help_flag)
                 // no more tokens in input string; break the loop.
                 eof = true;
                 // remove newline from the last token
-                *(token+i-1)[strlen(*(token+i-1))-1] = '\0';
+                (*token)[i-1][strlen((*token)[i-1])-1] = '\0';
             } else {
                 // latest token is a string; store it to the tokens array
-                strcpy(token[i], buf);
+                strcpy((*token)[i], buf);
                 (*tokenc)++;
             }
             i++;
@@ -237,7 +237,7 @@ int read(int *tokenc, char *token[], bool help_flag)
     } else { // help flag set
         // set tokenc to 1 to make sure that the parser gets to the help flag condition check
         // this is a quick fix to prevent me having to mess with the parser
-        tokenc = 1;
+        *tokenc = 1;
     }
     return 0;
 }

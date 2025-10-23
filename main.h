@@ -15,7 +15,10 @@
 #include "vecmath.h"
 #include "commands.h"
 
-int read(int *tokenc, char *token[], bool help_flag);
+#define MAX_TOKENS 6
+#define TOKEN_LENGTH 17
+
+int read(int *tokenc, char (*token)[MAX_TOKENS][TOKEN_LENGTH], bool help_flag);
 
 int parse_var(Vector **arg, Operation *operation, char *token, Vector *vector_list, bool skip_error_message);
 
