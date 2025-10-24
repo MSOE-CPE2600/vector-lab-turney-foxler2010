@@ -31,9 +31,9 @@ int main(int argc, char *argv[])
     Command command;
     bool quitting = false;
     // TODO malloc-ify
-    Vector vector_list[10];
+    VectorList vector_list;
     // call clear() to make sure that empty slots are marked correctly
-    clear(vector_list);
+    clear(&vector_list);
 
     /*
      * Main loop
@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
                 help_flag = false;
             } else {
                 command.operation = DISPLAY;
-                parse_var(&(command.a), &(command.operation), token[0], vector_list, false);
+                parse_var(&(command.a), &(command.operation), token[0], &vector_list, false);
             }
         } else if (tokenc == 5 && !strcmp(token[1], "=")) {
             /*
@@ -70,18 +70,18 @@ int main(int argc, char *argv[])
              */
             if (!strcmp(token[3], "+")) {
                 command.operation = ADDVEC;
-                parse_new_vec(&(command.c), &(command.operation), token[0], vector_list);
-                parse_var(&(command.a), &(command.operation), token[2], vector_list, false);
-                parse_var(&(command.b), &(command.operation), token[4], vector_list, false);
+                parse_new_vec(&(command.c), &(command.operation), token[0], &vector_list);
+                parse_var(&(command.a), &(command.operation), token[2], &vector_list, false);
+                parse_var(&(command.b), &(command.operation), token[4], &vector_list, false);
             } else if (!strcmp(token[3], "-")) {
                 command.operation = SUBVEC;
-                parse_new_vec(&(command.c), &(command.operation), token[0], vector_list);
-                parse_var(&(command.a), &(command.operation), token[2], vector_list, false);
-                parse_var(&(command.b), &(command.operation), token[4], vector_list, false);
+                parse_new_vec(&(command.c), &(command.operation), token[0], &vector_list);
+                parse_var(&(command.a), &(command.operation), token[2], &vector_list, false);
+                parse_var(&(command.b), &(command.operation), token[4], &vector_list, false);
             } else if (!strcmp(token[3], "*")) {
                 bool first_token_scalar = false;
                 command.operation = DOTVEC;
-                parse_var(&(command.a), &(command.operation), token[2], vector_list, true);
+                parse_var(&(command.a), &(command.operation), token[2], &vector_list, true);
                 if (command.operation == NO_OP) { // first arg token is not a var, could be a scalar
                     int return_value = sscanf(token[2], "%lf", &(command.x));
                     if (return_value > 0) {
@@ -96,9 +96,9 @@ int main(int argc, char *argv[])
                     }
                 }
                 if (first_token_scalar) {
-                    parse_var(&(command.a), &(command.operation), token[4], vector_list, true);
+                    parse_var(&(command.a), &(command.operation), token[4], &vector_list, true);
                 } else {
-                    parse_var(&(command.b), &(command.operation), token[4], vector_list, true);
+                    parse_var(&(command.b), &(command.operation), token[4], &vector_list, true);
                 }
                 if (command.operation == NO_OP) { // last token is not a var, could be a scalar
                     int return_value = sscanf(token[4], "%lf", &(command.x));
@@ -111,12 +111,12 @@ int main(int argc, char *argv[])
                         // and leave operation as NO_OP
                     }
                 }
-                parse_new_vec(&(command.c), &(command.operation), token[0], vector_list);
+                parse_new_vec(&(command.c), &(command.operation), token[0], &vector_list);
             } else if (!strcmp(token[3], "x")) {
                 command.operation = CROSSVEC;
-                parse_new_vec(&(command.c), &(command.operation), token[0], vector_list);
-                parse_var(&(command.a), &(command.operation), token[2], vector_list, false);
-                parse_var(&(command.b), &(command.operation), token[4], vector_list, false);
+                parse_new_vec(&(command.c), &(command.operation), token[0], &vector_list);
+                parse_var(&(command.a), &(command.operation), token[2], &vector_list, false);
+                parse_var(&(command.b), &(command.operation), token[4], &vector_list, false);
             } else { // 5 tokens and not a math op means new_vec
                 command.operation = NEW_VEC;
                 int return_value = sscanf(token[2], "%lf", &(command.x));
@@ -134,23 +134,23 @@ int main(int argc, char *argv[])
                     printf("invalid command.\n");
                     command.operation = NO_OP;
                 }
-                parse_new_vec(&(command.c), &(command.operation), token[0], vector_list);
+                parse_new_vec(&(command.c), &(command.operation), token[0], &vector_list);
             }
         } else if (tokenc == 3) {
             Vector ans = {"ans"};
             command.c = &ans;
             if (!strcmp(token[1], "+")) {
                 command.operation = ADDVEC;
-                parse_var(&(command.a), &(command.operation), token[0], vector_list, false);
-                parse_var(&(command.b), &(command.operation), token[2], vector_list, false);
+                parse_var(&(command.a), &(command.operation), token[0], &vector_list, false);
+                parse_var(&(command.b), &(command.operation), token[2], &vector_list, false);
             } else if (!strcmp(token[1], "-")) {
                 command.operation = SUBVEC;
-                parse_var(&(command.a), &(command.operation), token[0], vector_list, false);
-                parse_var(&(command.b), &(command.operation), token[2], vector_list, false);
+                parse_var(&(command.a), &(command.operation), token[0], &vector_list, false);
+                parse_var(&(command.b), &(command.operation), token[2], &vector_list, false);
             } else if (!strcmp(token[1], "*")) {
                 bool first_token_scalar = false;
                 command.operation = DOTVEC;
-                parse_var(&(command.a), &(command.operation), token[0], vector_list, true);
+                parse_var(&(command.a), &(command.operation), token[0], &vector_list, true);
                 if (command.operation == NO_OP) { // first token is not a var, could be a scalar
                     int return_value = sscanf(token[0], "%lf", &(command.x));
                     if (return_value > 0) {
@@ -165,9 +165,9 @@ int main(int argc, char *argv[])
                     }
                 }
                 if (first_token_scalar) {
-                    parse_var(&(command.a), &(command.operation), token[2], vector_list, true);
+                    parse_var(&(command.a), &(command.operation), token[2], &vector_list, true);
                 } else {
-                    parse_var(&(command.b), &(command.operation), token[2], vector_list, true);
+                    parse_var(&(command.b), &(command.operation), token[2], &vector_list, true);
                 }
                 if (command.operation == NO_OP) { // last token is not a var, could be a scalar
                     int return_value = sscanf(token[2], "%lf", &(command.x));
@@ -182,8 +182,8 @@ int main(int argc, char *argv[])
                 }
             } else if (!strcmp(token[1], "x")) {
                 command.operation = CROSSVEC;
-                parse_var(&(command.a), &(command.operation), token[0], vector_list, false);
-                parse_var(&(command.b), &(command.operation), token[2], vector_list, false);
+                parse_var(&(command.a), &(command.operation), token[0], &vector_list, false);
+                parse_var(&(command.b), &(command.operation), token[2], &vector_list, false);
             } else {
                 printf("invalid command.\n");
                 command.operation = NO_OP;
@@ -196,7 +196,7 @@ int main(int argc, char *argv[])
         /*
          * Execute command
          */
-        execute(&quitting, command, vector_list);
+        execute(&quitting, command, &vector_list);
     }
 
     return EXIT_SUCCESS;
@@ -242,7 +242,7 @@ int read(int *tokenc, char (*token)[MAX_TOKENS][TOKEN_LENGTH], bool help_flag)
     return 0;
 }
 
-int parse_var(Vector **arg, Operation *operation, char *token, Vector *vector_list, bool skip_error_message)
+int parse_var(Vector **arg, Operation *operation, char *token, VectorList *vector_list, bool skip_error_message)
 {
     // see if the token is a varname, and if so assign it to command.a.
     // otherwise, print error and set operation to NO_OP
@@ -265,7 +265,7 @@ int parse_var(Vector **arg, Operation *operation, char *token, Vector *vector_li
     return 0;
 }
 
-int parse_new_vec(Vector **arg, Operation *operation, char *token, Vector *vector_list)
+int parse_new_vec(Vector **arg, Operation *operation, char *token, VectorList *vector_list)
 {
     bool var_found = false;
     int i = 0;

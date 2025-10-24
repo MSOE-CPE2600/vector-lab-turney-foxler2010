@@ -10,13 +10,14 @@
 #include <stdbool.h>
 #include <string.h>
 #include "vector_struct.h"
+#include "vector_list_struct.h"
 
 int quit(bool *quitting);
 
 int display(Vector *vec);
 
-int list(Vector *vector_list);
+int list(VectorList *vector_list);
 
-int clear(Vector *vector_list);
+int clear(VectorList *vector_list);
 
 int help();

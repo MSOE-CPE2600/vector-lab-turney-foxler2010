@@ -21,7 +21,7 @@ int display(Vector *vec)
     return 0;
 }
 
-int list(Vector *vector_list)
+int list(VectorList *vector_list)
 {
     for (int i = 0; i < 10; i++) {
         // strcmp returns 0 if the strings match; since we want the opposite, no "!" operator is required
@@ -32,7 +32,7 @@ int list(Vector *vector_list)
     return 0;
 }
 
-int clear(Vector *vector_list)
+int clear(VectorList *vector_list)
 {
     // fill names with empty strings to denote unused slots
     for (int i = 0; i < 10; i++) {
