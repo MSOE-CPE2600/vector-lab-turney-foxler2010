@@ -12,7 +12,7 @@
 #include "vector_struct.h"
 #include "vector_list_struct.h"
 
-int quit(bool *quitting);
+int quit(bool *quitting, VectorList *vector_list);
 
 int display(Vector *vec);
 

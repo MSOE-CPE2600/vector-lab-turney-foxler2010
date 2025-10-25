@@ -7,10 +7,12 @@
  */
 
 #include "commands.h"
+#include "vector_list_tools.h"
 
-int quit(bool *quitting)
+int quit(bool *quitting, VectorList *vector_list)
 {
     printf("goodbye!\n");
+    clear(vector_list);
     *quitting = true;
     return 0;
 }
@@ -23,20 +25,41 @@ int display(Vector *vec)
 
 int list(VectorList *vector_list)
 {
-    for (int i = 0; i < 10; i++) {
-        // strcmp returns 0 if the strings match; since we want the opposite, no "!" operator is required
-        if (strcmp((vector_list+i)->name, "")) {
-            display(vector_list+i);
+    bool list_traversed = false;
+    VectorList *current_node = vector_list;
+    if (current_node != NULL) {
+        while (!list_traversed) {
+            // strcmp returns 0 if the strings match; since we want the opposite, no "!" operator is required
+            if (strcmp(current_node->vec->name, "")) {
+                display(current_node->vec);
+            }
         }
+    } // else list is empty, don't print anything
+    else {
+        // TODO debug
+        printf("DEBUG: (*)vector_list == null\n");
     }
     return 0;
 }
 
 int clear(VectorList *vector_list)
 {
-    // fill names with empty strings to denote unused slots
-    for (int i = 0; i < 10; i++) {
-        strcpy((vector_list+i)->name, "");
+    bool done_clearing = false;
+    VectorList *current_node = vector_list;
+    VectorList *next_node = NULL;
+    if (current_node != NULL) {
+        while (!done_clearing) {
+            if (current_node->next != NULL) {
+                next_node = current_node->next;
+            } else {
+                done_clearing = true;
+            }
+            free_vec(&(current_node));
+            if (next_node != NULL) {
+                current_node = next_node;
+                next_node = NULL;
+            }
+        }
     }
     return 0;
 }

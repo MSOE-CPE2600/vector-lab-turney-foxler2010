@@ -13,6 +13,7 @@
 #include "command_struct.h"
 #include "vector_struct.h"
 #include "vector_list_struct.h"
+#include "vector_list_tools.h"
 #include "operation.h"
 #include "vecmath.h"
 #include "commands.h"
@@ -24,6 +25,6 @@ int read(int *tokenc, char (*token)[MAX_TOKENS][TOKEN_LENGTH], bool help_flag);
 
 int parse_var(Vector **arg, Operation *operation, char *token, VectorList *vector_list, bool skip_error_message);
 
-int parse_new_vec(Vector **arg, Operation *operation, char *token, VectorList *vector_list);
+int parse_new_vec(Vector **arg, char *token, VectorList *vector_list);
 
-int execute(bool *quitting, Command command, Vector *vector_list);
+int execute(bool *quitting, Command command, VectorList *vector_list);

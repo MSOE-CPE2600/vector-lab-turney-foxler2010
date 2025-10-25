@@ -30,10 +30,7 @@ int main(int argc, char *argv[])
     char token[MAX_TOKENS][TOKEN_LENGTH];
     Command command;
     bool quitting = false;
-    // TODO malloc-ify
-    VectorList vector_list;
-    // call clear() to make sure that empty slots are marked correctly
-    clear(&vector_list);
+    VectorList *vector_list = NULL;
 
     /*
      * Main loop
@@ -62,7 +59,7 @@ int main(int argc, char *argv[])
                 help_flag = false;
             } else {
                 command.operation = DISPLAY;
-                parse_var(&(command.a), &(command.operation), token[0], &vector_list, false);
+                parse_var(&(command.a), &(command.operation), token[0], vector_list, false);
             }
         } else if (tokenc == 5 && !strcmp(token[1], "=")) {
             /*
@@ -70,18 +67,18 @@ int main(int argc, char *argv[])
              */
             if (!strcmp(token[3], "+")) {
                 command.operation = ADDVEC;
-                parse_new_vec(&(command.c), &(command.operation), token[0], &vector_list);
-                parse_var(&(command.a), &(command.operation), token[2], &vector_list, false);
-                parse_var(&(command.b), &(command.operation), token[4], &vector_list, false);
+                parse_new_vec(&(command.c), token[0], vector_list);
+                parse_var(&(command.a), &(command.operation), token[2], vector_list, false);
+                parse_var(&(command.b), &(command.operation), token[4], vector_list, false);
             } else if (!strcmp(token[3], "-")) {
                 command.operation = SUBVEC;
-                parse_new_vec(&(command.c), &(command.operation), token[0], &vector_list);
-                parse_var(&(command.a), &(command.operation), token[2], &vector_list, false);
-                parse_var(&(command.b), &(command.operation), token[4], &vector_list, false);
+                parse_new_vec(&(command.c), token[0], vector_list);
+                parse_var(&(command.a), &(command.operation), token[2], vector_list, false);
+                parse_var(&(command.b), &(command.operation), token[4], vector_list, false);
             } else if (!strcmp(token[3], "*")) {
                 bool first_token_scalar = false;
                 command.operation = DOTVEC;
-                parse_var(&(command.a), &(command.operation), token[2], &vector_list, true);
+                parse_var(&(command.a), &(command.operation), token[2], vector_list, true);
                 if (command.operation == NO_OP) { // first arg token is not a var, could be a scalar
                     int return_value = sscanf(token[2], "%lf", &(command.x));
                     if (return_value > 0) {
@@ -96,9 +93,9 @@ int main(int argc, char *argv[])
                     }
                 }
                 if (first_token_scalar) {
-                    parse_var(&(command.a), &(command.operation), token[4], &vector_list, true);
+                    parse_var(&(command.a), &(command.operation), token[4], vector_list, true);
                 } else {
-                    parse_var(&(command.b), &(command.operation), token[4], &vector_list, true);
+                    parse_var(&(command.b), &(command.operation), token[4], vector_list, true);
                 }
                 if (command.operation == NO_OP) { // last token is not a var, could be a scalar
                     int return_value = sscanf(token[4], "%lf", &(command.x));
@@ -111,12 +108,12 @@ int main(int argc, char *argv[])
                         // and leave operation as NO_OP
                     }
                 }
-                parse_new_vec(&(command.c), &(command.operation), token[0], &vector_list);
+                parse_new_vec(&(command.c), token[0], vector_list);
             } else if (!strcmp(token[3], "x")) {
                 command.operation = CROSSVEC;
-                parse_new_vec(&(command.c), &(command.operation), token[0], &vector_list);
-                parse_var(&(command.a), &(command.operation), token[2], &vector_list, false);
-                parse_var(&(command.b), &(command.operation), token[4], &vector_list, false);
+                parse_new_vec(&(command.c), token[0], vector_list);
+                parse_var(&(command.a), &(command.operation), token[2], vector_list, false);
+                parse_var(&(command.b), &(command.operation), token[4], vector_list, false);
             } else { // 5 tokens and not a math op means new_vec
                 command.operation = NEW_VEC;
                 int return_value = sscanf(token[2], "%lf", &(command.x));
@@ -134,23 +131,23 @@ int main(int argc, char *argv[])
                     printf("invalid command.\n");
                     command.operation = NO_OP;
                 }
-                parse_new_vec(&(command.c), &(command.operation), token[0], &vector_list);
+                parse_new_vec(&(command.c), token[0], vector_list);
             }
         } else if (tokenc == 3) {
             Vector ans = {"ans"};
             command.c = &ans;
             if (!strcmp(token[1], "+")) {
                 command.operation = ADDVEC;
-                parse_var(&(command.a), &(command.operation), token[0], &vector_list, false);
-                parse_var(&(command.b), &(command.operation), token[2], &vector_list, false);
+                parse_var(&(command.a), &(command.operation), token[0], vector_list, false);
+                parse_var(&(command.b), &(command.operation), token[2], vector_list, false);
             } else if (!strcmp(token[1], "-")) {
                 command.operation = SUBVEC;
-                parse_var(&(command.a), &(command.operation), token[0], &vector_list, false);
-                parse_var(&(command.b), &(command.operation), token[2], &vector_list, false);
+                parse_var(&(command.a), &(command.operation), token[0], vector_list, false);
+                parse_var(&(command.b), &(command.operation), token[2], vector_list, false);
             } else if (!strcmp(token[1], "*")) {
                 bool first_token_scalar = false;
                 command.operation = DOTVEC;
-                parse_var(&(command.a), &(command.operation), token[0], &vector_list, true);
+                parse_var(&(command.a), &(command.operation), token[0], vector_list, true);
                 if (command.operation == NO_OP) { // first token is not a var, could be a scalar
                     int return_value = sscanf(token[0], "%lf", &(command.x));
                     if (return_value > 0) {
@@ -165,9 +162,9 @@ int main(int argc, char *argv[])
                     }
                 }
                 if (first_token_scalar) {
-                    parse_var(&(command.a), &(command.operation), token[2], &vector_list, true);
+                    parse_var(&(command.a), &(command.operation), token[2], vector_list, true);
                 } else {
-                    parse_var(&(command.b), &(command.operation), token[2], &vector_list, true);
+                    parse_var(&(command.b), &(command.operation), token[2], vector_list, true);
                 }
                 if (command.operation == NO_OP) { // last token is not a var, could be a scalar
                     int return_value = sscanf(token[2], "%lf", &(command.x));
@@ -182,8 +179,8 @@ int main(int argc, char *argv[])
                 }
             } else if (!strcmp(token[1], "x")) {
                 command.operation = CROSSVEC;
-                parse_var(&(command.a), &(command.operation), token[0], &vector_list, false);
-                parse_var(&(command.b), &(command.operation), token[2], &vector_list, false);
+                parse_var(&(command.a), &(command.operation), token[0], vector_list, false);
+                parse_var(&(command.b), &(command.operation), token[2], vector_list, false);
             } else {
                 printf("invalid command.\n");
                 command.operation = NO_OP;
@@ -196,7 +193,7 @@ int main(int argc, char *argv[])
         /*
          * Execute command
          */
-        execute(&quitting, command, &vector_list);
+        execute(&quitting, command, vector_list);
     }
 
     return EXIT_SUCCESS;
@@ -246,57 +243,105 @@ int parse_var(Vector **arg, Operation *operation, char *token, VectorList *vecto
 {
     // see if the token is a varname, and if so assign it to command.a.
     // otherwise, print error and set operation to NO_OP
-    bool var_found = false;
-    int i = 0;
-    while(!var_found && i < 10) {
-        if (!strcmp(token, vector_list[i].name)) {
-            *arg = &(vector_list[i]);
-            var_found = true;
+    bool done_searching = false;
+    VectorList *current_node = vector_list;
+    if (current_node != NULL) {
+        while(!done_searching) {
+            if (!strcmp(token, current_node->vec->name)) {
+                // we found the var!
+                *arg = current_node->vec;
+                done_searching = true;
+            } else if (current_node->next != NULL) {
+                // move to next node and check again
+                current_node = current_node->next;
+            } else {
+                // reached end of list and still haven't found it
+                if (!skip_error_message) {
+                    printf("no var named \"%s\" found.\n", token);
+                }
+                // skip execution this time around, and just prompt the user again immediately
+                *operation = NO_OP;
+                done_searching = true;
+            }
         }
-        i++;
-    }
-    if (!var_found) {
-        if (!skip_error_message) {
-            printf("no var named \"%s\" found.\n", token);
-        }
-        // skip execution this time around, and just prompt the user again immediately
-        *operation = NO_OP;
     }
     return 0;
 }
 
-int parse_new_vec(Vector **arg, Operation *operation, char *token, VectorList *vector_list)
+int parse_new_vec(Vector **arg, char *token, VectorList *vector_list)
 {
     bool var_found = false;
-    int i = 0;
-    while(!var_found && i < 10) {
-        if (!strcmp(token, vector_list[i].name)) {
-            *arg = &(vector_list[i]);
-            var_found = true;
-        }
-        i++;
-    }
-    if (!var_found) {
-        var_found = false;
-        i = 0;
-        while(!var_found && i < 10) {
-            if (!strcmp(vector_list[i].name, "")) {
-                *arg = &(vector_list[i]);
-                strcpy((*arg)->name, token);
+    bool list_traversed = false;
+    VectorList *current_node = vector_list;
+    if (current_node != NULL) {
+        while(!var_found && !list_traversed) {
+            if(!strcmp(token, current_node->vec->name)) {
+                // node already exists
+                *arg = current_node->vec;
                 var_found = true;
+            } else if (current_node->next != NULL) {
+                // move to next node and check again
+                current_node = current_node->next;
+            } else {
+                // reached end of list, node does not exist and needs to be created
+                list_traversed = true;
             }
-            i++;
         }
-        if (!var_found) {
-            printf("no more space in memory.\n");
-            // skip execution this time around, and just prompt the user again immediately
-            *operation = NO_OP;
-        }
+    } else {
+        // TODO debug
+        printf("DEBUG: created new first node\n");
+        // list is empty so first node needs to be created
+        init_node(&(vector_list), NULL, token);
+        // TODO debug
+        printf("DEBUG: new first node address: %p\n", vector_list);
+        *arg = vector_list->vec;
+        // we already initialized a node, so skip the following if statement
+        var_found = true;
+    }
+    if(!var_found) {
+        // TODO debug
+        printf("DEBUG: created new node\n");
+        // we're already located at end of list,
+        // so "next" is NULL and can be used as the location of the new node
+        init_node(&(current_node->next), current_node, token);
+        // TODO debug
+        printf("DEBUG: new node address: %p\n", current_node->next);
+        *arg = current_node->next->vec;
     }
     return 0;
+
+    /*
+     * Old code from before dynamic memory was implemented
+     */
+    // bool var_found = false;
+    // int i = 0;
+    // while(!var_found && i < 10) {
+    //     if (!strcmp(token, vector_list[i].name)) {
+    //         *arg = &(vector_list[i]);
+    //         var_found = true;
+    //     }
+    //     i++;
+    // }
+    // if (!var_found) {
+    //     var_found = false;
+    //     i = 0;
+    //     while(!var_found && i < 10) {
+    //         if (!strcmp(vector_list[i].name, "")) {
+    //             *arg = &(vector_list[i]);
+    //             strcpy((*arg)->name, token);
+    //             var_found = true;
+    //         }
+    //         i++;
+    //     }
+    //     if (!var_found) {
+    //         printf("no more space in memory.\n");
+    //         // skip execution this time around, and just prompt the user again immediately
+    //         *operation = NO_OP;
+    //     }
+    // }
 }
 
-int execute(bool *quitting, Command command, Vector *vector_list)
+int execute(bool *quitting, Command command, VectorList *vector_list)
 {
     // determine what to do based on the operation specified
     switch(command.operation) {
@@ -337,7 +382,7 @@ int execute(bool *quitting, Command command, Vector *vector_list)
             help();
             break;
         case QUIT:
-            quit(quitting);
+            quit(quitting, vector_list);
             break;
         case NO_OP:
             // do nothing
