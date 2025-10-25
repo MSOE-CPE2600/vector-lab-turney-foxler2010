@@ -9,7 +9,7 @@
 #include "commands.h"
 #include "vector_list_tools.h"
 
-int quit(bool *quitting, VectorList *vector_list)
+int quit(bool *quitting, VectorList **vector_list)
 {
     printf("goodbye!\n");
     clear(vector_list);
@@ -23,29 +23,27 @@ int display(Vector *vec)
     return 0;
 }
 
-int list(VectorList *vector_list)
+int list(VectorList **vector_list)
 {
     bool list_traversed = false;
-    VectorList *current_node = vector_list;
+    VectorList *current_node = *vector_list;
     if (current_node != NULL) {
         while (!list_traversed) {
-            // strcmp returns 0 if the strings match; since we want the opposite, no "!" operator is required
-            if (strcmp(current_node->vec->name, "")) {
-                display(current_node->vec);
+            display(current_node->vec);
+            if (current_node->next != NULL) {
+                current_node = current_node->next;
+            } else {
+                list_traversed = true;
             }
         }
     } // else list is empty, don't print anything
-    else {
-        // TODO debug
-        printf("DEBUG: (*)vector_list == null\n");
-    }
     return 0;
 }
 
-int clear(VectorList *vector_list)
+int clear(VectorList **vector_list)
 {
     bool done_clearing = false;
-    VectorList *current_node = vector_list;
+    VectorList *current_node = *vector_list;
     VectorList *next_node = NULL;
     if (current_node != NULL) {
         while (!done_clearing) {
@@ -60,6 +58,7 @@ int clear(VectorList *vector_list)
                 next_node = NULL;
             }
         }
+        *vector_list = NULL;
     }
     return 0;
 }

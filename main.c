@@ -67,12 +67,12 @@ int main(int argc, char *argv[])
              */
             if (!strcmp(token[3], "+")) {
                 command.operation = ADDVEC;
-                parse_new_vec(&(command.c), token[0], vector_list);
+                parse_new_vec(&(command.c), token[0], &vector_list);
                 parse_var(&(command.a), &(command.operation), token[2], vector_list, false);
                 parse_var(&(command.b), &(command.operation), token[4], vector_list, false);
             } else if (!strcmp(token[3], "-")) {
                 command.operation = SUBVEC;
-                parse_new_vec(&(command.c), token[0], vector_list);
+                parse_new_vec(&(command.c), token[0], &vector_list);
                 parse_var(&(command.a), &(command.operation), token[2], vector_list, false);
                 parse_var(&(command.b), &(command.operation), token[4], vector_list, false);
             } else if (!strcmp(token[3], "*")) {
@@ -108,10 +108,10 @@ int main(int argc, char *argv[])
                         // and leave operation as NO_OP
                     }
                 }
-                parse_new_vec(&(command.c), token[0], vector_list);
+                parse_new_vec(&(command.c), token[0], &vector_list);
             } else if (!strcmp(token[3], "x")) {
                 command.operation = CROSSVEC;
-                parse_new_vec(&(command.c), token[0], vector_list);
+                parse_new_vec(&(command.c), token[0], &vector_list);
                 parse_var(&(command.a), &(command.operation), token[2], vector_list, false);
                 parse_var(&(command.b), &(command.operation), token[4], vector_list, false);
             } else { // 5 tokens and not a math op means new_vec
@@ -131,7 +131,7 @@ int main(int argc, char *argv[])
                     printf("invalid command.\n");
                     command.operation = NO_OP;
                 }
-                parse_new_vec(&(command.c), token[0], vector_list);
+                parse_new_vec(&(command.c), token[0], &vector_list);
             }
         } else if (tokenc == 3) {
             Vector ans = {"ans"};
@@ -193,7 +193,7 @@ int main(int argc, char *argv[])
         /*
          * Execute command
          */
-        execute(&quitting, command, vector_list);
+        execute(&quitting, command, &vector_list);
     }
 
     return EXIT_SUCCESS;
@@ -265,14 +265,21 @@ int parse_var(Vector **arg, Operation *operation, char *token, VectorList *vecto
             }
         }
     }
+    else {
+        if (!skip_error_message) {
+            printf("no var named \"%s\" found.\n", token);
+        }
+        // skip execution this time around, and just prompt the user again immediately
+        *operation = NO_OP;
+    }
     return 0;
 }
 
-int parse_new_vec(Vector **arg, char *token, VectorList *vector_list)
+int parse_new_vec(Vector **arg, char *token, VectorList **vector_list)
 {
     bool var_found = false;
     bool list_traversed = false;
-    VectorList *current_node = vector_list;
+    VectorList *current_node = *vector_list;
     if (current_node != NULL) {
         while(!var_found && !list_traversed) {
             if(!strcmp(token, current_node->vec->name)) {
@@ -288,60 +295,22 @@ int parse_new_vec(Vector **arg, char *token, VectorList *vector_list)
             }
         }
     } else {
-        // TODO debug
-        printf("DEBUG: created new first node\n");
         // list is empty so first node needs to be created
-        init_node(&(vector_list), NULL, token);
-        // TODO debug
-        printf("DEBUG: new first node address: %p\n", vector_list);
-        *arg = vector_list->vec;
+        init_node(vector_list, NULL, token);
+        *arg = (*vector_list)->vec;
         // we already initialized a node, so skip the following if statement
         var_found = true;
     }
     if(!var_found) {
-        // TODO debug
-        printf("DEBUG: created new node\n");
         // we're already located at end of list,
         // so "next" is NULL and can be used as the location of the new node
         init_node(&(current_node->next), current_node, token);
-        // TODO debug
-        printf("DEBUG: new node address: %p\n", current_node->next);
         *arg = current_node->next->vec;
     }
     return 0;
-
-    /*
-     * Old code from before dynamic memory was implemented
-     */
-    // bool var_found = false;
-    // int i = 0;
-    // while(!var_found && i < 10) {
-    //     if (!strcmp(token, vector_list[i].name)) {
-    //         *arg = &(vector_list[i]);
-    //         var_found = true;
-    //     }
-    //     i++;
-    // }
-    // if (!var_found) {
-    //     var_found = false;
-    //     i = 0;
-    //     while(!var_found && i < 10) {
-    //         if (!strcmp(vector_list[i].name, "")) {
-    //             *arg = &(vector_list[i]);
-    //             strcpy((*arg)->name, token);
-    //             var_found = true;
-    //         }
-    //         i++;
-    //     }
-    //     if (!var_found) {
-    //         printf("no more space in memory.\n");
-    //         // skip execution this time around, and just prompt the user again immediately
-    //         *operation = NO_OP;
-    //     }
-    // }
 }
 
-int execute(bool *quitting, Command command, VectorList *vector_list)
+int execute(bool *quitting, Command command, VectorList **vector_list)
 {
     // determine what to do based on the operation specified
     switch(command.operation) {
