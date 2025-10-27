@@ -21,3 +21,7 @@ int list(VectorList **vector_list);
 int clear(VectorList **vector_list);
 
 int help();
+
+int save(char *filename, VectorList **vector_list);
+
+int load(char *filename, VectorList **vector_list);

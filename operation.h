@@ -21,7 +21,9 @@ typedef enum Operation {
     CLEAR,
     HELP,
     QUIT,
-    NO_OP
+    NO_OP,
+    SAVE,
+    LOAD
 } Operation;
 
 #endif // OPERATION_H

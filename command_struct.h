@@ -21,6 +21,7 @@ typedef struct Command {
     double x;
     double y;
     double z;
+    char filename[30];
 } Command;
 
 #endif // COMMAND_H

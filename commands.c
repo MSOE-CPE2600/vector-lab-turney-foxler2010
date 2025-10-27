@@ -90,3 +90,95 @@ int help()
     printf("    a * scalar : product of a vector and a scalar quantity\n");
     return 0;
 }
+
+int save(char *filename, VectorList **vector_list) {
+    bool list_traversed = false;
+    VectorList *current_node = *vector_list;
+    if (current_node != NULL) {
+        FILE *file = fopen(filename, "w");
+        if (file == NULL) {
+            printf("error opening file\n");
+            return 1;
+        }
+        while (!list_traversed) {
+            fprintf(file, "%s,%lf,%lf,%lf\n", current_node->vec->name,
+                current_node->vec->x,
+                current_node->vec->y,
+                current_node->vec->z);
+            
+            if (current_node->next != NULL) {
+                current_node = current_node->next;
+            } else {
+                list_traversed = true;
+            }
+        }
+        fclose(file);
+    } else {
+        // else list is empty, don't write anything
+        printf("vector list empty; file not written.\n");
+    }
+    return 0;
+}
+
+int load(char *filename, VectorList **vector_list) {
+    FILE *file = fopen(filename, "r");
+    if (file == NULL) {
+        printf("error opening file\n");
+        return 1;
+    }
+    clear(vector_list);
+
+    bool eof = false;
+    VectorList **current_node = vector_list;
+    VectorList *prev_node = NULL;
+    char buf[50];
+    while (!eof) {
+        if (fgets(buf, sizeof buf, file) == NULL) {
+            eof = true;
+        } else {
+            char *token = strtok(buf, ",");
+            init_node(current_node, prev_node, token);
+            token = strtok(NULL, ",");
+            if (token == NULL) {
+                printf("error parsing .csv file.\n");
+                clear(vector_list);
+                return 1;
+            }
+            int return_value = sscanf(token, "%lf", &((*current_node)->vec->x));
+            if (return_value <= 0) {
+                printf("error parsing .csv file.\n");
+                clear(vector_list);
+                return 1;
+            }
+            token = strtok(NULL, ",");
+            if (token == NULL) {
+                printf("error parsing .csv file.\n");
+                clear(vector_list);
+                return 1;
+            }
+            return_value = sscanf(token, "%lf", &((*current_node)->vec->y));
+            if (return_value <= 0) {
+                printf("error parsing .csv file.\n");
+                clear(vector_list);
+                return 1;
+            }
+            token = strtok(NULL, ",");
+            if (token == NULL) {
+                printf("error parsing .csv file.\n");
+                clear(vector_list);
+                return 1;
+            }
+            return_value = sscanf(token, "%lf", &((*current_node)->vec->z));
+            if (return_value <= 0) {
+                printf("error parsing .csv file.\n");
+                clear(vector_list);
+                return 1;
+            }
+            // move to next node
+            prev_node = *current_node;
+            current_node = &((*current_node)->next);
+        }
+    }
+    fclose(file);
+    return 0;
+}

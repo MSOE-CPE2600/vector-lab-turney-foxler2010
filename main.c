@@ -185,6 +185,17 @@ int main(int argc, char *argv[])
                 printf("invalid command.\n");
                 command.operation = NO_OP;
             }
+        } else if (tokenc == 2) {
+            if (!strcmp(token[0], "save")) {
+                command.operation = SAVE;
+                strcpy(command.filename, token[1]);
+            } else if (!strcmp(token[0], "load")) {
+                command.operation = LOAD;
+                strcpy(command.filename, token[1]);
+            } else {
+                printf("invalid command.\n");
+                command.operation = NO_OP;
+            }
         } else {
             printf("invalid command.\n");
             command.operation = NO_OP;
@@ -355,6 +366,12 @@ int execute(bool *quitting, Command command, VectorList **vector_list)
             break;
         case NO_OP:
             // do nothing
+            break;
+        case SAVE:
+            save(command.filename, vector_list);
+            break;
+        case LOAD:
+            load(command.filename, vector_list);
             break;
         default:
             // do nothing
