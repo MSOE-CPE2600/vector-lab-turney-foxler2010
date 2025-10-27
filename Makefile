@@ -10,6 +10,9 @@ TEST_EXECUTABLE := testSuite
 
 all: $(SOURCES) $(EXECUTABLE)
 
+debug: $(SOURCES) $(OBJECTS)
+	$(CC) -g $(OBJECTS) $(LDFLAGS) -o $(EXECUTABLE)
+
 tests: $(TEST_SOURCES) $(TEST_EXECUTABLE)
 
 clean:
