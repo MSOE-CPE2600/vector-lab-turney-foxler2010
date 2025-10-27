@@ -65,10 +65,9 @@ int clear(VectorList **vector_list)
 
 int help()
 {
-    printf("Usage: veclab [-h|--help] [command]\n");
-    printf("    where \"command\" is a valid veclab command.\n");
+    printf("Usage: veclab [-h|--help]\n");
     printf("\n");
-    printf("Veclab will run the command given in the program arguments, if there is one,\n");
+    printf("Veclab will print the help message, if the help flag is passed,\n");
     printf("and then open a prompt where more commands can be entered interactively.\n");
     printf("\n");
     printf("Commands:\n");
@@ -88,6 +87,11 @@ int help()
     printf("    a * b : dot product of two vectors\n");
     printf("    a x b : cross product of two vectors\n");
     printf("    a * scalar : product of a vector and a scalar quantity\n");
+    printf("  Saving/Loading Variables from CSV files:\n");
+    printf("   memory is saved to/loaded from files in the CSV format. each row is of the form: \"varname,x,y,z\".\n");
+    printf("    save [filename] : saves current memory to the file at \"filename\".\n");
+    printf("    load [filename] : loads the file at [filename] into memory. current memory is cleared.\n");
+
     return 0;
 }
 
